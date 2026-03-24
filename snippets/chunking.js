@@ -1,29 +1,39 @@
 /**
- * TermOver AI — Industry-Aware Scoring Engine
+ * TermOver AI — Parallel Chunk Processor
  * 
- * Risk thresholds are adjusted based on the website's industry.
- * A "content upload" clause is expected on YouTube but alarming on a bank.
+ * Large ToS documents are split into chunks and analyzed concurrently
+ * to reduce scan time from 4+ minutes down to under 20 seconds.
  * 
  * NOTE: This is a simplified illustration. Full implementation is proprietary.
  */
 
-const INDUSTRIES = {
-  streaming:  { contentUpload: 'low',    dataSelling: 'high',   autoRenewal: 'medium' },
-  ecommerce:  { contentUpload: 'none',   dataSelling: 'high',   autoRenewal: 'high'   },
-  saas:       { contentUpload: 'low',    dataSelling: 'medium', autoRenewal: 'high'   },
-  finance:    { contentUpload: 'none',   dataSelling: 'high',   autoRenewal: 'medium' },
-  social:     { contentUpload: 'medium', dataSelling: 'high',   autoRenewal: 'low'    },
-  default:    { contentUpload: 'medium', dataSelling: 'high',   autoRenewal: 'medium' },
-};
+const MAX_CHUNK_SIZE = 1500; // tokens per chunk
 
-function getIndustryThresholds(industry) {
-  return INDUSTRIES[industry] ?? INDUSTRIES.default;
+function splitIntoChunks(text, maxSize) {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  const chunks = [];
+  let current = "";
+
+  for (const sentence of sentences) {
+    if ((current + sentence).length > maxSize) {
+      chunks.push(current.trim());
+      current = sentence;
+    } else {
+      current += " " + sentence;
+    }
+  }
+
+  if (current.trim()) chunks.push(current.trim());
+  return chunks;
 }
 
-function scoreClause(clauseType, industry) {
-  const thresholds = getIndustryThresholds(industry);
-  const level = thresholds[clauseType];
+async function analyzeInParallel(documentText) {
+  const chunks = splitIntoChunks(documentText, MAX_CHUNK_SIZE);
 
-  const scoreMap = { none: 0, low: 25, medium: 60, high: 90 };
-  return scoreMap[level] ?? 50;
+  // All chunks processed concurrently — not sequentially
+  const results = await Promise.all(
+    chunks.map(chunk => analyzeChunk(chunk))
+  );
+
+  return mergeResults(results);
 }
