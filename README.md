@@ -240,7 +240,7 @@ Built by **Amir Samidarwish** — CS student (Honors Track) at Bar-Ilan Universi
 - 🤖 NVIDIA Inception Program Member
 - 🔬 MEET Program — MIT & Hebrew University
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://linkedin.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](www.linkedin.com/in/amir-darwish-060b47282)
 
 ---
 
