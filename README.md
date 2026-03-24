@@ -10,7 +10,7 @@
 [![AWS Founders Club](https://img.shields.io/badge/AWS-Founders_Club-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](#)
 [![NVIDIA Inception](https://img.shields.io/badge/NVIDIA-Inception_Program-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](#)
 
-**3,000+ Installs &nbsp;|&nbsp; 1,000+ Downloads &nbsp;|&nbsp; 20+ Languages &nbsp;|&nbsp; < 20 Second Scans**
+**3,000+ Installs &nbsp;|&nbsp; 1,000+ Daily Active Users &nbsp;|&nbsp; 20+ Languages &nbsp;|&nbsp; < 20 Second Scans**
 
 </div>
 
@@ -156,7 +156,7 @@ Cache hit (known site): ⚡ Instant — no scan needed
 
 DB coverage:  40,000+ websites already analyzed and cached
 Installs:     3,000+
-Downloads:    1,000+
+Daily Active Users: 1,000+
 ```
 
 ---
@@ -171,6 +171,7 @@ Downloads:    1,000+
 | AWS Founders Club | ✅ Member |
 | NVIDIA Inception Program | ✅ Member |
 | 3,000+ installs | ✅ Reached |
+| 1,000+ Daily Active Users | ✅ Reached |
 | 20+ language support | ✅ Live |
 | 40,000+ websites cached | ✅ Live |
 
