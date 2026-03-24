@@ -4,13 +4,13 @@
 
 **AI-powered Chrome extension that analyzes Terms of Service & Privacy Policies in real-time**
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](#)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/gjnoffbiofloekaileonocagbffikknh)
 [![Patent Granted](https://img.shields.io/badge/Patent-Granted-22c55e?style=for-the-badge)](#)
 [![Google Certified Publisher](https://img.shields.io/badge/Google-Certified_Publisher-4285F4?style=for-the-badge&logo=google&logoColor=white)](#)
 [![AWS Founders Club](https://img.shields.io/badge/AWS-Founders_Club-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](#)
 [![NVIDIA Inception](https://img.shields.io/badge/NVIDIA-Inception_Program-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](#)
 
-**100+ Daily Active Users &nbsp;|&nbsp; 20+ Languages &nbsp;|&nbsp; < 20 Second Scans**
+**3,000+ Installs &nbsp;|&nbsp; 1,000+ Downloads &nbsp;|&nbsp; 20+ Languages &nbsp;|&nbsp; < 20 Second Scans**
 
 </div>
 
@@ -30,6 +30,7 @@ It's a Chrome extension that automatically detects, extracts, and analyzes the T
 
 - 🔍 **Real-time detection** — automatically identifies ToS/PP documents on any website
 - ⚡ **Fast analysis** — full scan completes in under 20 seconds (optimized from an original 4+ minute baseline)
+- 🗄️ **Smart caching** — results are cached in Supabase + AWS so returning users get instant results with no re-scan
 - 🌍 **20+ languages** — Arabic, Hebrew, English, German, French, Spanish, and more
 - 🏭 **Industry-aware scoring** — risk thresholds calibrated per industry (streaming, SaaS, e-commerce, etc.)
 - 🚩 **Actionable risk flags** — highlights dangerous clauses with plain-language explanations
@@ -87,6 +88,24 @@ TermOver AI is built on a **multi-backend, parallel processing architecture** wi
         │  │  User engagement &           │   │
         │  │  re-activation               │   │
         │  └──────────────────────────────┘   │
+        └──────────────┬─────────────────────┘
+                       │
+        ┌──────────────▼─────────────────────┐
+        │         Caching Layer               │
+        │                                     │
+        │  ┌──────────────────────────────┐   │
+        │  │  Supabase (PostgreSQL)       │   │
+        │  │  Stores analyzed ToS results │   │
+        │  │  for instant cache hits      │   │
+        │  └──────────────────────────────┘   │
+        │  ┌──────────────────────────────┐   │
+        │  │  AWS                         │   │
+        │  │  Backup & scalable storage   │   │
+        │  │  for high-traffic periods    │   │
+        │  └──────────────────────────────┘   │
+        │                                     │
+        │  📦 40,000+ websites cached          │
+        │  ⚡ Zero re-scan for known sites     │
         └─────────────────────────────────────┘
 ```
 
@@ -95,6 +114,7 @@ TermOver AI is built on a **multi-backend, parallel processing architecture** wi
 | Challenge | Solution | Result |
 |---|---|---|
 | Slow scan speed (4+ min) | Parallel chunking + concurrent API calls | **< 20 seconds** |
+| Repeated scans wasting API calls | Supabase + AWS caching layer | **Instant results for 40,000+ cached sites** |
 | Generic risk flags on streaming sites | Context-aware filtering per industry | Relevant, noise-free results |
 | Multi-language ToS documents | Language detection + multilingual AI prompting | **20+ languages supported** |
 | Backend reliability | 4 independent Cloudflare Workers | Isolated failure domains |
@@ -113,10 +133,15 @@ TermOver AI is built on a **multi-backend, parallel processing architecture** wi
 - REST API architecture
 - Multi-model AI pipeline
 
+**Database & Caching**
+- Supabase (PostgreSQL) — primary cache for analyzed ToS results
+- AWS — scalable backup storage
+- 40,000+ websites terms stored and growing
+
 **Infrastructure & Recognition**
-- AWS (Founders Club member)
-- NVIDIA Inception Program
 - Google Certified Software Publisher
+- AWS Founders Club
+- NVIDIA Inception Program
 - Granted Patent
 
 ---
@@ -124,11 +149,14 @@ TermOver AI is built on a **multi-backend, parallel processing architecture** wi
 ## Performance
 
 ```
-Before optimization:   ████████████████████████  4+ minutes
-After optimization:    ██  < 20 seconds
+Scan speed (before):   ████████████████████████  4+ minutes
+Scan speed (after):    ██  < 20 seconds
 
-Improvement: ~92% reduction in scan time
-Method: Parallel chunk processing + concurrent AI API calls
+Cache hit (known site): ⚡ Instant — no scan needed
+
+DB coverage:  40,000+ websites already analyzed and cached
+Installs:     3,000+
+Downloads:    1,000+
 ```
 
 ---
@@ -142,8 +170,9 @@ Method: Parallel chunk processing + concurrent AI API calls
 | Google Publisher certification | ✅ Certified |
 | AWS Founders Club | ✅ Member |
 | NVIDIA Inception Program | ✅ Member |
-| 100+ Daily Active Users | ✅ Reached |
+| 3,000+ installs | ✅ Reached |
 | 20+ language support | ✅ Live |
+| 40,000+ websites cached | ✅ Live |
 
 ---
 
@@ -163,6 +192,23 @@ async function analyzeInParallel(documentText) {
   );
 
   return mergeResults(results);
+}
+```
+
+### Cache-First Lookup (simplified)
+
+```javascript
+// Check cache before triggering a full AI scan
+async function getAnalysis(websiteUrl) {
+  const cached = await supabase
+    .from('terms_cache')
+    .select('result')
+    .eq('url', websiteUrl)
+    .single();
+
+  if (cached.data) return cached.data.result; // instant
+
+  return await runFullScan(websiteUrl); // only if not cached
 }
 ```
 
